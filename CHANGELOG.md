@@ -3,5 +3,5 @@
 * Initial release.
 * Features:
     * Push custom events and data to the dataLayer.
-    * Control event frequency using a helper cookie.
+    * Set cookies for event frequency control.
     * Debug mode for console logging.
