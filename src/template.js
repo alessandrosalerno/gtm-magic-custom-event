@@ -1,5 +1,5 @@
 /**
-* A user-friendly GTM Custom Template to push events and custom data to the dataLayer,
+* A user-friendly GTM Custom Template to push custom events and custom data to the dataLayer,
 * with a built-in option to set cookies for event frequency control.
 * @author Alessandro Salerno
 * @version 1.0.0
