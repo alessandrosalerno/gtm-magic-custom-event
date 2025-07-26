@@ -1,6 +1,6 @@
-# Magic Event for GTM
+# Magic Custom Event for GTM
 
-A user-friendly GTM Custom Template to easily push events and custom data to the dataLayer, featuring a smart tool for frequency control via cookies. Part of the **Magic Tags** suite.
+A user-friendly GTM Custom Template to easily push events and custom data to the dataLayer, featuring a smart tool for frequency control via cookies.
 
 This tag simplifies common tracking setups that would normally require custom JavaScript variables.
 
