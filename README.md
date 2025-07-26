@@ -23,7 +23,7 @@ This tag simplifies common tracking setups that would normally require custom Ja
 ## Configuration
 
 -   **Enable DataLayer Push**: Main toggle for the event functionality.
-    -   **Event Name**: The name of the event to push (e.g., `form_submission`).
+    -   **Event Name**: The name of the event to push (e.g., `time_and_scroll`).
     -   **Add Event Data / Event Parameters Table**: A table to add key-value pairs (`varName`, `varValue`) of custom data to your event.
 -   **Enable Cookie Generation**: Use this section to control the event's firing logic.
     -   **Cookie Table**: Configure a control cookie here. For example, to fire the event only once, you can check for the existence of this cookie with a GTM variable and set it with this tag.
