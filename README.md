@@ -26,7 +26,7 @@ This tag simplifies common tracking setups that would normally require custom Ja
     -   **Event Name**: The name of the event to push (e.g., `time_and_scroll`).
     -   **Add Event Data / Event Parameters Table**: A table to add key-value pairs (`varName`, `varValue`) of custom data to your event.
 -   **Enable Cookie Generation**: Use this section to generate cookies for the event's firing logic.
-    -   **Cookie Table**: Configure a control cookie value and expiration here.
+    -   **Cookie Table**: Control cookie value and expiration here.
        (For example, to fire the event only once, you can check for the existence of this cookie with a GTM variable and set it with this tag.)
 -   **Debug Mode**: Check this to see detailed logs in the browser's console.
 
