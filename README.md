@@ -37,7 +37,3 @@ This template may require the following permissions based on your configuration:
 -   **Sets cookies**: Required *only if* you use the "Enable Cookie Generation" feature to control event frequency.
 
 ---
-
-## License
-
-This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/). For commercial use, please contact the author to arrange a separate license.
