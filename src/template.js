@@ -5,7 +5,7 @@
 * @version 1.0.0
 */
 
-// --- Sandboxed JavaScript APIs ---
+// --- GTM APIs ---
 const queryPermission = require('queryPermission');
 const createQueue = require('createQueue');
 const makeTableMap = require('makeTableMap');
