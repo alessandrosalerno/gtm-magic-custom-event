@@ -7,7 +7,7 @@ This tag simplifies common tracking setups that would normally require custom Ja
 ## Features
 
 -   **Flexible Event & Data Pushing**: Easily configure and push any event along with a custom set of data parameters.
--   **Event Frequency Control**: Includes an optional cookie mechanism to control how often an event fires (e.g., only once per user session).
+-   **Event Frequency Control**: Use a helper cookie to control how often an event fires (e.g., only once per user session).
 -   **Debug Mode**: Enable detailed console logs for easy troubleshooting.
 -   **User-Friendly**: Designed to be intuitive and simple to configure.
 -   **Lightweight & Secure**: Focused on its main task, requiring minimal permissions.
