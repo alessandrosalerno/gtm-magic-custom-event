@@ -17,8 +17,6 @@ const assertThat = require('assertThat');
 
 /**
  * Logs a message to the console only if debug mode is enabled.
- * @param {string} level The log level (e.g., 'info', 'warn', 'error').
- * @param {*} message The message to log.
  */
 
 const log = function(level, message) {
