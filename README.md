@@ -37,7 +37,3 @@ This tag simplifies common tracking setups that would normally require custom Ja
 This template requires the following permission:
 
 -   **Accesses dataLayer**: Required for pushing the event and its associated data.
-
-## License
-
-This work is licensed under a [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](http://creativecommons.org/licenses/by-nc-sa/4.0/). For commercial use, please contact the author to arrange a separate license.
