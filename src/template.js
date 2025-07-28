@@ -1,5 +1,5 @@
 /**
- * Magic Custom Event: A GTM Custom Template to easily push events and custom data.
+ * Magic Custom Event: A GTM Custom Template to easily push custom events and custom data.
  * @author Alessandro Salerno
  * @version 1.0.0
  */
