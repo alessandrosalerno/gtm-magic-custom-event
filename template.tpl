@@ -15,7 +15,6 @@ ___INFO___
   "securityGroups": [],
   "displayName": "Magic Custom Event",
   "brand": {
-  "brand": {
     "id": "brand_dummy",
     "displayName": "Alex075",
     "categories": [
