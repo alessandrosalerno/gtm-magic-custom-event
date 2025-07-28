@@ -8,7 +8,6 @@ This tag simplifies common tracking setups that would normally require custom Ja
 
 -   **Flexible Event & Data Pushing**: Easily configure and push any event along with a custom set of data parameters.
 -   **Advanced Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean`. Includes an "Inherit" option to automatically use the data type from a GTM Variable.
--   **Data Validation**: Automatically validates data types to ensure high-quality data is sent to the dataLayer.
 -   **Custom Data Layer Support**: Works with websites that use a custom name for the `dataLayer` variable.
 -   **Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
