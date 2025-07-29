@@ -4,7 +4,7 @@
 * @version 1.0.0
 */
 
-// --- Sandboxed JavaScript APIs ---
+// --- GTM APIs ---
 const queryPermission = require('queryPermission');
 const createQueue = require('createQueue');
 const logToConsole = require('logToConsole');
@@ -56,8 +56,9 @@ const logTable = function (table, tableName) {
     });
 };
 
-
-// Helper function to check for integer strings without Regex or other unavailable APIs.
+/**
+ * Check for integer strings without Regex or other unavailable APIs.
+ */
 const isIntegerString = function (str) {
     if (!str || str.length === 0) {
         return false;
@@ -70,6 +71,9 @@ const isIntegerString = function (str) {
     return true;
 };
 
+/**
+ * Sets a nested property on an object using a dot-notation path, automatically creating arrays for numeric keys (e.g., 'products.0.name').
+ */
 const setNestedValue = function (obj, path, value) {
     const keys = path.split('.');
     let current = obj;
@@ -93,33 +97,44 @@ const setNestedValue = function (obj, path, value) {
 
 // --- MAIN EXECUTION FLOW ---
 
+// Get the custom dataLayer name from the UI, or default to 'dataLayer'.
 const dataLayerName = data.dataLayerName || 'dataLayer';
 
+// Verify permission to access the dataLayer before proceeding.
 if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
 
+    // Create the queue for the specified dataLayer.
     const dataLayerPush = createQueue(dataLayerName);
+    // Initialize the base event object.
     let eventData = { "event": data.eventName };
 
     log('info', 'Preparing to push event: "' + data.eventName + '" to dataLayer: "' + dataLayerName + '"');
 
+    // Process custom parameters if the user has enabled them.
     if (data.addEventData) {
 
         logTable(data.varSet, "Raw Event Parameters Table");
         const finalParameters = {};
 
+        // Loop over each row in the parameter table.
         data.varSet.forEach(function (row) {
             const rawValue = row.varValue;
             const varName = row.varName;
             const desiredType = row.varType || 'inherit';
 
+            // If type is 'inherit', use the value as-is, preserving its original type.
             if (desiredType === 'inherit') {
                 setNestedValue(finalParameters, varName, rawValue);
             } else {
+
+                // For specific types, first ensure the value is a string for consistent processing.
                 const stringValue = '' + rawValue;
                 switch (desiredType) {
                     case 'number':
+                        // Normalize European decimal comma to a period before conversion.
                         const normalizedValue = stringValue.replace(',', '.');
                         const numValue = makeNumber(normalizedValue);
+                        // Check for NaN to validate the conversion. A value is NaN if it's not equal to itself.
                         if (numValue !== numValue) {
                             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
                         } else {
@@ -128,6 +143,7 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
                         break;
                     case 'boolean':
                         const lowerCaseValue = stringValue.toLowerCase();
+                        // Strictly check for 'true' or 'false' strings.
                         if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
                             setNestedValue(finalParameters, varName, lowerCaseValue === 'true');
                         } else {
@@ -143,16 +159,16 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             }
         });
 
+        // Merge the processed parameters into the main event object.
         eventData = merge(eventData, finalParameters);
 
+        // Log the final, type-converted parameters for debugging.
         let processedLogMessage = 'Event Parameters Processed (with types): ';
         const keys = Object.keys(finalParameters);
         if (keys.length > 0) {
             keys.forEach(function (key, i) {
                 let valueToLog = finalParameters[key];
                 const valueType = typeof valueToLog;
-
-                // Se il valore è un oggetto (e non null), lo convertiamo in stringa JSON per il log
                 if (valueType === 'object' && valueToLog !== null) {
                     valueToLog = JSON.stringify(valueToLog);
                 }
@@ -167,12 +183,16 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             log('info', 'No valid event parameters were processed to be pushed.');
         }
 
+        // Push the final object to the dataLayer.
         dataLayerPush(eventData);
         log('info', 'Event "' + data.eventName + '" successfully pushed to "' + dataLayerName + '".');
-
+        
+        // Signal success to GTM.
         data.gtmOnSuccess();
 
     } else {
+        
+        // If permission is denied, log an error and signal failure. 
         log('error', 'Permission to access the dataLayer named "' + dataLayerName + '" was not granted.');
         data.gtmOnFailure();
     }
