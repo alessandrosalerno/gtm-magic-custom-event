@@ -122,40 +122,36 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             const varName = row.varName;
             const desiredType = row.varType || 'inherit';
 
-            // If type is 'inherit', use the value as-is, preserving its original type.
-            if (desiredType === 'inherit') {
-                setNestedValue(finalParameters, varName, rawValue);
-            } else {
-
-                // For specific types, first ensure the value is a string for consistent processing.
-                const stringValue = '' + rawValue;
-                switch (desiredType) {
-                    case 'number':
-                        // Normalize European decimal comma to a period before conversion.
-                        const normalizedValue = stringValue.replace(',', '.');
-                        const numValue = makeNumber(normalizedValue);
-                        // Check for NaN to validate the conversion. A value is NaN if it's not equal to itself.
-                        if (numValue !== numValue) {
-                            log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
-                        } else {
-                            setNestedValue(finalParameters, varName, numValue);
-                        }
-                        break;
-                    case 'boolean':
-                        const lowerCaseValue = stringValue.toLowerCase();
-                        // Strictly check for 'true' or 'false' strings.
-                        if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
-                            setNestedValue(finalParameters, varName, lowerCaseValue === 'true');
-                        } else {
-                            log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
-                        }
-                        break;
-                    case 'string':
-                        setNestedValue(finalParameters, varName, stringValue);
-                        break;
-                    default:
-                        setNestedValue(finalParameters, varName, rawValue);
-                }
+            // For specific types, first ensure the value is a string for consistent processing.
+            const stringValue = '' + rawValue;
+            //Check data type
+            switch (desiredType) {
+                case 'number':
+                    // Normalize European decimal comma to a period before conversion.
+                    const normalizedValue = stringValue.replace(',', '.');
+                    const numValue = makeNumber(normalizedValue);
+                    // Check for NaN to validate the conversion. A value is NaN if it's not equal to itself.
+                    if (numValue !== numValue) {
+                        log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
+                    } else {
+                        setNestedValue(finalParameters, varName, numValue);
+                    }
+                    break;
+                case 'boolean':
+                    const lowerCaseValue = stringValue.toLowerCase();
+                    // Strictly check for 'true' or 'false' strings.
+                    if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
+                        setNestedValue(finalParameters, varName, lowerCaseValue === 'true');
+                    } else {
+                        log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
+                    }
+                    break;
+                case 'string':
+                    setNestedValue(finalParameters, varName, stringValue);
+                    break;
+                case 'inherit':
+                default:
+                    setNestedValue(finalParameters, varName, rawValue);
             }
         });
 
