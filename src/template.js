@@ -1,5 +1,5 @@
 /**
-* Magic Custom Event: A GTM Custom Template to easily push events and custom data.
+* Magic Custom Event: A user-friendly GTM template to push custom events and structured data. Supports data type conversion and nested objects via dot notation.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
