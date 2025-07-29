@@ -26,7 +26,7 @@ This tag simplifies common tracking setups that would normally require custom Ja
     -   **Parameter Name**: The key for your data point (e.g., `product_id`).
     -   **Value**: The value for your data point. You can type a static value or insert a GTM Variable (e.g., `{{Click ID}}`).
     -   **Type**: Specify the data type for the value.
-        -   **Inherit from Variable**: (Default) Uses the original data type provided by a GTM Variable (e.g., if your variable returns a number, a number is sent).
+        -   **Inherit**: Uses the original data type provided by a GTM Variable (e.g., if your variable returns a number, a number is sent).
         -   **String/Number/Boolean**: Forces the value to be converted and validated as the selected type.
 -   **Advanced Settings**
     -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named `dataLayer`.
