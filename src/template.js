@@ -40,7 +40,7 @@ const logTable = function (table, tableName) {
 };
 
 /**
- * Check for integer strings without Regex or other unavailable APIs.
+ * Check for integer strings
  */
 const isIntegerString = function (str) {
     if (!str || str.length === 0) {
