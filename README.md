@@ -2,8 +2,6 @@
 
 A user-friendly GTM Custom Template to push custom events and structured data to the dataLayer. It supports advanced features like data type conversion and the creation of nested objects and arrays via dot notation.
 
-This tag is part of the **Magic Tags** suite and simplifies common tracking setups that would normally require complex custom JavaScript variables.
-
 ---
 ## Features
 
