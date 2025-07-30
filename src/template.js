@@ -82,6 +82,70 @@ const setNestedValue = function (obj, path, value) {
     current[keys[keys.length - 1]] = value;
 };
 
+/**
+ * Converts a raw value to a specific type based on a user's selection.
+*/
+const getTypedValue = function (rawValue, desiredType, varName) {
+
+    // If the type is 'inherit' or not specified, return the raw value with its original type.
+    if (desiredType === 'inherit' || !desiredType) {
+        return rawValue;
+    }
+
+    const stringValue = '' + rawValue;
+
+    switch (desiredType) {
+        case 'number':
+            const normalizedValue = stringValue.split('.').join('').split(',').join('.');
+            const numValue = makeNumber(normalizedValue);
+            // Check for NaN, which is the result of a failed conversion.
+            if (numValue !== numValue) {
+                log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
+                return undefined;
+            }
+            return numValue;
+
+        case 'boolean':
+            const lowerCaseValue = stringValue.toLowerCase();
+            // Strictly check if the string is either 'true' or 'false'.
+            if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
+                return lowerCaseValue === 'true';
+            }            
+            log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
+            return undefined;
+
+        case 'string':
+            return stringValue;
+    }
+
+    // Fallback for any unexpected 'desiredType' values.
+    return rawValue;
+};
+
+/**
+ * Logs the final, type-converted parameters for debugging.
+ */
+const logProcessedParameters = function (parameters) {
+    let processedLogMessage = 'Event Parameters Processed (with types): ';
+    const keys = Object.keys(parameters);
+    if (keys.length > 0) {
+        keys.forEach(function (key, i) {
+            let valueToLog = parameters[key];
+            const valueType = typeof valueToLog;
+            valueToLog = JSON.stringify(valueToLog);
+
+            processedLogMessage += key + '=' + valueToLog + ' (' + valueType + ')';
+            if (i < keys.length - 1) {
+                processedLogMessage += ', ';
+            }
+        });
+        log('info', processedLogMessage);
+    } else {
+        log('info', 'No valid event parameters were processed to be pushed.');
+    }
+};
+
+
 // --- MAIN EXECUTION FLOW ---
 
 // Get the custom dataLayer name from the UI, or default to 'dataLayer'.
@@ -100,46 +164,22 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
     // Process custom parameters if the user has enabled them.
     if (data.addEventData) {
 
-        logTable(data.varSet, "Raw Event Parameters Table");
+        //log event data table if debugMode is active
+        if (data.debugMode) {
+            logTable(data.varSet, "Raw Event Parameters Table");
+        }
+
         const finalParameters = {};
 
         // Loop over each row in the parameter table.
         data.varSet.forEach(function (row) {
-            const rawValue = row.varValue;
-            const varName = row.varName;
-            const desiredType = row.varType || 'inherit';
 
-            // For specific types, first ensure the value is a string for consistent processing.
-            const stringValue = '' + rawValue;
-            //Check data type
-            switch (desiredType) {
-                case 'number':
-                    // Normalize European numbers without regex: remove dots, replace decimal comma
-                    const normalizedValue = stringValue.split('.').join('').split(',').join('.');
+            // Call the helper function to convert the raw value to its desired type.
+            const typedValue = getTypedValue(row.varValue, row.varType, row.varName);
 
-                    const numValue = makeNumber(normalizedValue);
-                    // Check for NaN to validate the conversion.
-                    if (numValue !== numValue) {
-                        log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
-                    } else {
-                        setNestedValue(finalParameters, varName, numValue);
-                    }
-                    break;
-                case 'boolean':
-                    const lowerCaseValue = stringValue.toLowerCase();
-                    // Strictly check for 'true' or 'false' strings.
-                    if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
-                        setNestedValue(finalParameters, varName, lowerCaseValue === 'true');
-                    } else {
-                        log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
-                    }
-                    break;
-                case 'string':
-                    setNestedValue(finalParameters, varName, stringValue);
-                    break;
-                case 'inherit':
-                default:
-                    setNestedValue(finalParameters, varName, rawValue);
+            // Only add the parameter if the type conversion was successful
+            if (typedValue !== undefined) {
+                setNestedValue(finalParameters, row.varName, typedValue);
             }
         });
 
@@ -148,23 +188,10 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             eventData[key] = finalParameters[key];
         });
 
-        // Log the final, type-converted parameters for debugging.
-        let processedLogMessage = 'Event Parameters Processed (with types): ';
-        const keys = Object.keys(finalParameters);
-        if (keys.length > 0) {
-            keys.forEach(function (key, i) {
-                let valueToLog = finalParameters[key];
-                const valueType = typeof valueToLog;
-                valueToLog = JSON.stringify(valueToLog);
-
-                processedLogMessage += key + '=' + valueToLog + ' (' + valueType + ')';
-                if (i < keys.length - 1) {
-                    processedLogMessage += ', ';
-                }
-            });
-            log('info', processedLogMessage);
-        } else {
-            log('info', 'No valid event parameters were processed to be pushed.');
+        //log processed parameter if debugMode is active
+        if (data.debugMode) {
+            // Call the new, isolated logging function.
+            logProcessedParameters(finalParameters);
         }
 
     } else {
