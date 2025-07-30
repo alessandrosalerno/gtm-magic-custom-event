@@ -148,7 +148,7 @@ const logProcessedParameters = function (parameters) {
 
 // --- MAIN EXECUTION FLOW ---
 
-// Get the custom dataLayer name from the UI, or default to 'dataLayer'.
+// Get the custom dataLayer name or default to 'dataLayer'.
 const dataLayerName = data.dataLayerName || 'dataLayer';
 
 // Verify permission to access the dataLayer before proceeding.
