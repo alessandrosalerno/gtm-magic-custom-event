@@ -26,9 +26,9 @@ A user-friendly GTM Custom Template to push custom events and structured data to
 -   **Event Name**: The name of the event to push to the dataLayer (e.g., `click_and_scroll`).
 -   **Add Event Data**: Check this box to add custom parameters to the event.
     -   **Event Parameters Table**:
-        -   **Parameter Name**: The key for your data point. Dot notation is supported (e.g., `ecommerce.value`, `ecommerce.items.0.price`).
+        -   **Variable**: The key for your data point. Dot notation is supported (e.g., `ecommerce.value`, `ecommerce.items.0.price`).
         -   **Value**: The value for your data point. You can type a static value or insert a GTM Variable.
-        -   **Type**: Specify the data type for the value.
+        -   **Data Type**: Specify the data type for the value.
             -   **Inherit from Variable**: (Default) preserve the original type from the data source. This is the recommended option when using variables.
             -   **String/Number/Boolean**: Forces the value to be converted and validated as the selected type. Use this for static values entered manually.
 -   **Advanced Settings**
