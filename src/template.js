@@ -25,23 +25,6 @@ const log = function (level, message) {
 };
 
 /**
- * Merges multiple objects into a single new object.
- */
-const merge = function () {
-    const result = {};
-    for (let i = 0; i < arguments.length; i++) {
-        const obj = arguments[i];
-        assertThat(obj, 'Invalid argument passed to the merge function.').isObject();
-        const keys = Object.keys(obj);
-        for (let j = 0; j < keys.length; j++) {
-            const key = keys[j];
-            result[key] = obj[key];
-        }
-    }
-    return result;
-};
-
-/**
  * Logs the content of a GTM UI table to the console for debugging.
  */
 const logTable = function (table, tableName) {
@@ -75,6 +58,10 @@ const isIntegerString = function (str) {
  * Sets a nested property on an object using a dot-notation path, automatically creating arrays for numeric keys (e.g., 'products.0.name').
  */
 const setNestedValue = function (obj, path, value) {
+    
+    // Exit early if input is invalid or path is empty
+    if (!obj || typeof path !== 'string' || !path.length) return;
+
     const keys = path.split('.');
     let current = obj;
 
@@ -127,10 +114,11 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             //Check data type
             switch (desiredType) {
                 case 'number':
-                    // Normalize European decimal comma to a period before conversion.
-                    const normalizedValue = stringValue.replace(',', '.');
+                    // Normalize European numbers without regex: remove dots, replace decimal comma
+                    const normalizedValue = stringValue.split('.').join('').split(',').join('.');
+
                     const numValue = makeNumber(normalizedValue);
-                    // Check for NaN to validate the conversion. A value is NaN if it's not equal to itself.
+                    // Check for NaN to validate the conversion.
                     if (numValue !== numValue) {
                         log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
                     } else {
@@ -155,8 +143,10 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             }
         });
 
-        // Merge the processed parameters into the main event object.
-        eventData = merge(eventData, finalParameters);
+        // Directly assign processed parameters to event object
+        Object.keys(finalParameters).forEach(function (key) {
+            eventData[key] = finalParameters[key];
+        });
 
         // Log the final, type-converted parameters for debugging.
         let processedLogMessage = 'Event Parameters Processed (with types): ';
@@ -165,9 +155,7 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             keys.forEach(function (key, i) {
                 let valueToLog = finalParameters[key];
                 const valueType = typeof valueToLog;
-                if (valueType === 'object' && valueToLog !== null) {
-                    valueToLog = JSON.stringify(valueToLog);
-                }
+                valueToLog = JSON.stringify(valueToLog);
 
                 processedLogMessage += key + '=' + valueToLog + ' (' + valueType + ')';
                 if (i < keys.length - 1) {
@@ -179,17 +167,23 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             log('info', 'No valid event parameters were processed to be pushed.');
         }
 
-        // Push the final object to the dataLayer.
-        dataLayerPush(eventData);
-        log('info', 'Event "' + data.eventName + '" successfully pushed to "' + dataLayerName + '".');
-        
-        // Signal success to GTM.
-        data.gtmOnSuccess();
-
     } else {
         
-        // If permission is denied, log an error and signal failure. 
-        log('error', 'Permission to access the dataLayer named "' + dataLayerName + '" was not granted.');
-        data.gtmOnFailure();
+        log('info', ' Pushing basic event only. No event parameters were added ("addEventData" is false)');
+        
     }
+
+    // Push the final object to the dataLayer.
+    dataLayerPush(eventData);
+    log('info', 'Event "' + data.eventName + '" successfully pushed to "' + dataLayerName + '".');
+    
+    // Signal success to GTM.
+    data.gtmOnSuccess();
+
+} else {
+    
+    // If permission is denied, log an error and signal failure. 
+    log('error', 'Permission to access the dataLayer named "' + dataLayerName + '" was not granted.');
+    data.gtmOnFailure();
+
 }
