@@ -9,7 +9,7 @@ A user-friendly GTM Custom Template to push custom events and structured data to
 -   **Advanced Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean` or use "Inherit" to preserve the original type from the data source.
 -   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
 -   **Custom Data Layer Support**: Works with websites that use a custom name for the `dataLayer` variable.
--   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting without affecting the production environment.
+-   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
 ---
 ## How to Install
