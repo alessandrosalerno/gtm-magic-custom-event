@@ -1,6 +1,6 @@
 # Magic Custom Event for GTM
 
-A user-friendly GTM Custom Template to push custom events and structured data to the dataLayer. It supports advanced features like data type conversion and the creation of nested objects and arrays via dot notation.
+A Google Tag Manager Custom Tag Template to push custom events and structured data to the dataLayer. It supports advanced features like data type conversion and the creation of nested objects and arrays via dot notation.
 
 ---
 ## Features
