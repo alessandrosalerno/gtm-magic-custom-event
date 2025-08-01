@@ -15,6 +15,7 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
 -   **Custom Data Layer Support**: Works with websites that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
+![Example](images/gtm-magic-custom-event-tag-advaced-settings.jpg)
 ---
 ## How to Install
 
