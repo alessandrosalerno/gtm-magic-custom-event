@@ -8,6 +8,10 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
 -   **Flexible Event & Data Pushing**: Easily configure and push any event along with a custom set of structured data parameters.
 -   **Advanced Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean` or use "Inherit" to preserve the original type from the data source.
 -   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
+
+![Example](images/gtm-magic-custom-event-tag-settings.jpg)
+---
+## Advaced Settings
 -   **Custom Data Layer Support**: Works with websites that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
