@@ -193,7 +193,6 @@ const queryPermission = require('queryPermission');
 const createQueue = require('createQueue');
 const logToConsole = require('logToConsole');
 const Object = require('Object');
-const assertThat = require('assertThat');
 const makeNumber = require('makeNumber');
 const JSON = require('JSON');
 
@@ -212,9 +211,7 @@ const log = function (level, message) {
  * Logs the content of a GTM UI table to the console for debugging.
  */
 const logTable = function (table, tableName) {
-    assertThat(table, 'The provided parameter is not a valid table (array-like).').isDefined().isNotNull().isArray();
     table.forEach(function (row, i) {
-        assertThat(row, 'Row ' + i + ' of the table is not a valid object.').isObject();
         let logMessage = (tableName ? tableName + ' - ' : '') + 'Row ' + i + ': ';
         Object.keys(row).forEach(function (key) {
             logMessage += key + '=' + row[key] + ', ';
