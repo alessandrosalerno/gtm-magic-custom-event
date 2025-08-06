@@ -1,5 +1,5 @@
 /**
-* Magic Custom Event: A user-friendly GTM template to push custom events and structured data. Supports data type conversion and nested objects via dot notation.
+* Magic Custom Event: A GTM template to push custom events and structured data. Supports data type conversion and nested objects via dot notation.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
@@ -30,7 +30,7 @@ const logTable = function (table, tableName) {
     table.forEach(function (row, i) {
         let logMessage = (tableName ? tableName + ' - ' : '') + 'Row ' + i + ': ';
         Object.keys(row).forEach(function (key) {
-            logMessage += key + '=' + row[key] + ', ';
+            logMessage += key + '=' + row[key] + ' | ';
         });
         log('info', logMessage.slice(0, -2));
     });
@@ -73,8 +73,55 @@ const setNestedValue = function (obj, path, value) {
 };
 
 /**
+ * Normalizes a string representing a number, handling both European and US formats.
+ * It removes thousand separators and standardizes the decimal separator to a dot (.).
+ */
+const normalizeNumberString = function(numberString) {
+    const hasDots = numberString.indexOf('.') !== -1;
+    const hasCommas = numberString.indexOf(',') !== -1;
+
+    // Case 1: Both dots and commas are present
+    if (hasDots && hasCommas) {
+        const lastDotPosition = numberString.lastIndexOf('.');
+        const lastCommaPosition = numberString.lastIndexOf(',');
+        
+        if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
+            return numberString.split('.').join('').replace(',', '.');
+        } else { // US format: "1,234.56"
+            return numberString.split(',').join('');
+        }
+    }
+
+    // Case 2: Only commas are present
+    else if (hasCommas) {
+        const commaCount = numberString.split(',').length - 1;
+        if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
+            return numberString.split(',').join('');
+        } else { // A single comma is a decimal separator: "123,45"
+            return numberString.replace(',', '.');
+        }
+    }
+
+    // Case 3: Only dots are present
+    else if (hasDots) {
+        const dotsCount = numberString.split('.').length - 1;
+        if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
+            return numberString.split('.').join('');
+        } else { // A single dot is a decimal separator: "123.45"
+            return numberString;
+        }
+    }
+
+    // Case 4: No separators are present
+    else {
+        return numberString; // The string is a plain integer like "1234".
+    }
+};
+
+
+/**
  * Converts a raw value to a specific type based on a user's selection.
-*/
+ */
 const getTypedValue = function (rawValue, desiredType, varName) {
     // If the type is 'inherit' or not specified, return the raw value with its original type.
     if (desiredType === 'inherit' || !desiredType) {
@@ -84,7 +131,8 @@ const getTypedValue = function (rawValue, desiredType, varName) {
     const stringValue = '' + rawValue;
     switch (desiredType) {
         case 'number':
-            const normalizedValue = stringValue.split('.').join('').split(',').join('.');
+            // Call the dedicated normalization function
+            const normalizedValue = normalizeNumberString(stringValue);
             const numValue = makeNumber(normalizedValue);
             // Check for NaN, which is the result of a failed conversion.
             if (numValue !== numValue) {
@@ -94,10 +142,12 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return numValue;
         case 'boolean':
             const lowerCaseValue = stringValue.toLowerCase();
-            // Strictly check if the string is either 'true' or 'false'.
-            if (lowerCaseValue === 'true' || lowerCaseValue === 'false') {
-                return lowerCaseValue === 'true';
-            }            
+            if (lowerCaseValue === 'true' || lowerCaseValue === '1') {
+                return true;
+            }
+            if (lowerCaseValue === 'false' || lowerCaseValue === '0') {
+                return false;
+            }
             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
             return undefined;
         case 'string':
@@ -179,4 +229,3 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
     log('error', 'Permission to access the dataLayer named "' + dataLayerName + '" was not granted.');
     data.gtmOnFailure();
 }
-
