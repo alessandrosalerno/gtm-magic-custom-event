@@ -34,7 +34,7 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
         -   **Variable**: The key for your data point. Dot notation is supported (e.g., `ecommerce.value`, `ecommerce.items.0.price`).
         -   **Value**: The value for your data point. You can type a static value or insert a GTM Variable.
         -   **Data Type**: Specify the data type for the value.
-            -   **Inherit from Variable**: (Default) preserve the original type from the data source. This is the recommended option when using variables.
+            -   **Inherit from Variable**: (Default) preserve the original type from the data source.
             -   **String/Number/Boolean**: Forces the value to be converted and validated as the selected type.
 -   **Advanced Settings**
     -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named dataLayer. **Note**: After saving, you must manually update the tag's "Accesses Globals" permission to include your custom Data Layer name.
