@@ -20,7 +20,7 @@ ___INFO___
     "UTILITY",
     "ADVERTISING",
     "PERSONALIZATION"
-    ],
+  ],
   "brand": {
     "id": "brand_dummy",
     "displayName": "Alex075",
@@ -261,44 +261,45 @@ const setNestedValue = function (obj, path, value) {
  * It removes thousand separators and standardizes the decimal separator to a dot (.).
  */
 const normalizeNumberString = function(numberString) {
-    const hasDots = numberString.indexOf('.') !== -1;
-    const hasCommas = numberString.indexOf(',') !== -1;
+    const cleanNumberString = numberString.trim();
+    const hasDots = cleanNumberString.indexOf('.') !== -1;
+    const hasCommas = cleanNumberString.indexOf(',') !== -1;
 
     // Case 1: Both dots and commas are present
     if (hasDots && hasCommas) {
-        const lastDotPosition = numberString.lastIndexOf('.');
-        const lastCommaPosition = numberString.lastIndexOf(',');
+        const lastDotPosition = cleanNumberString.lastIndexOf('.');
+        const lastCommaPosition = cleanNumberString.lastIndexOf(',');
         
         if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
-            return numberString.split('.').join('').replace(',', '.');
+            return cleanNumberString.split('.').join('').replace(',', '.');
         } else { // US format: "1,234.56"
-            return numberString.split(',').join('');
+            return cleanNumberString.split(',').join('');
         }
     }
 
     // Case 2: Only commas are present
     else if (hasCommas) {
-        const commaCount = numberString.split(',').length - 1;
+        const commaCount = cleanNumberString.split(',').length - 1;
         if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
-            return numberString.split(',').join('');
+            return cleanNumberString.split(',').join('');
         } else { // A single comma is a decimal separator: "123,45"
-            return numberString.replace(',', '.');
+            return cleanNumberString.replace(',', '.');
         }
     }
 
     // Case 3: Only dots are present
     else if (hasDots) {
-        const dotsCount = numberString.split('.').length - 1;
+        const dotsCount = cleanNumberString.split('.').length - 1;
         if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
-            return numberString.split('.').join('');
+            return cleanNumberString.split('.').join('');
         } else { // A single dot is a decimal separator: "123.45"
-            return numberString;
+            return cleanNumberString;
         }
     }
 
     // Case 4: No separators are present
     else {
-        return numberString; // The string is a plain integer like "1234".
+        return cleanNumberString; // The string is a plain integer like "1234".
     }
 };
 
@@ -510,6 +511,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 06/08/2025, 17:27:51
+Created on 07/08/2025, 19:15:01
 
 
