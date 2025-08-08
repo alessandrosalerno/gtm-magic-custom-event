@@ -136,7 +136,7 @@ const getTypedValue = function (rawValue, desiredType, varName) {
         return rawValue;
     }
     //String conversion and sanitize
-    const stringValue = ('' + rawValue).trim().split('"').join('').split("'").join('');
+    const stringValue = ('' + rawValue).trim().split('"').join(' ').split("'").join(' ');
     switch (desiredType) {
         case 'number':
             // Call the dedicated normalization function
