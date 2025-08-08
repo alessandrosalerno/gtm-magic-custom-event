@@ -2,5 +2,5 @@ homepage: 'https://www.linkedin.com/in/salernoalessandro/'
 documentation: 'https://github.com/alessandrosalerno/gtm-magic-custom-event/'
 
 versions:
-  - sha: afb441a348b569bafefecdac5dc013efafa9f52a
+  - sha: de9e52392cd77c187d9a3df63c436306367ece06
     changeNotes: Initial release of the Magic Custom Event tag.
