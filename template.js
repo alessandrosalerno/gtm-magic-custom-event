@@ -94,9 +94,9 @@ const normalizeNumberString = function(numberString) {
         const lastCommaPosition = numberString.lastIndexOf(',');
         
         if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
-            return numberString.replaceAll('.', '').replace(',', '.');
+            return numberString.split('.').join('').split(',').join('.');
         } else { // US format: "1,234.56"
-            return numberString.replaceAll(',', '');
+            return numberString.split(',').join('');
         }
     }
 
@@ -104,9 +104,9 @@ const normalizeNumberString = function(numberString) {
     else if (hasCommas) {
         const commaCount = numberString.split(',').length - 1;
         if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
-            return numberString.replaceAll(',', '');
+            return numberString.split(',').join('');
         } else { // A single comma is a decimal separator: "123,45"
-            return numberString.replace(',', '.');
+            return numberString.split(',').join('');
         }
     }
 
@@ -114,7 +114,7 @@ const normalizeNumberString = function(numberString) {
     else if (hasDots) {
         const dotsCount = numberString.split('.').length - 1;
         if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
-            return numberString.replaceAll('.', '');
+            return numberString.split(',').join('');
         } else { // A single dot is a decimal separator: "123.45"
             return numberString;
         }
@@ -135,8 +135,8 @@ const getTypedValue = function (rawValue, desiredType, varName) {
     if (desiredType === 'inherit' || !desiredType) {
         return rawValue;
     }
-    //String conversion
-    const stringValue = ('' + rawValue).trim();
+    //String conversion and sanitize
+    const stringValue = ('' + rawValue).trim().split('"').join('').split("'").join('');
     switch (desiredType) {
         case 'number':
             // Call the dedicated normalization function
