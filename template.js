@@ -106,7 +106,7 @@ const normalizeNumberString = function(numberString) {
         if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
             return numberString.split(',').join('');
         } else { // A single comma is a decimal separator: "123,45"
-            return numberString.split(',').join('');
+            return numberString.split(',').join('.');
         }
     }
 
@@ -114,7 +114,7 @@ const normalizeNumberString = function(numberString) {
     else if (hasDots) {
         const dotsCount = numberString.split('.').length - 1;
         if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
-            return numberString.split(',').join('');
+            return numberString.split('.').join('');
         } else { // A single dot is a decimal separator: "123.45"
             return numberString;
         }
