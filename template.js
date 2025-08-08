@@ -1,5 +1,5 @@
 /**
-* Magic Custom Event: A GTM template to push custom events and structured data. Supports data type conversion and nested objects via dot notation.
+* Magic Custom Event: A GTM template to push custom events and structured data.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
@@ -12,13 +12,20 @@ const Object = require('Object');
 const makeNumber = require('makeNumber');
 const JSON = require('JSON');
 
+// --- Inputs ---
+const eventName       = data.eventName;
+const dataLayerName   = data.dataLayerName || 'dataLayer';
+const addEventData   = data.addEventData || false;
+const eventParameters = data.varSet || [];
+const debugMode     = data.debugMode || false;
+
 // --- Helper Functions ---
 
 /**
  * Logs a message to the console only if debug mode is enabled.
  */
 const log = function (level, message) {
-    if (data.debugMode) {
+    if (debugMode) {
         logToConsole(level, message);
     }
 };
@@ -77,45 +84,45 @@ const setNestedValue = function (obj, path, value) {
  * It removes thousand separators and standardizes the decimal separator to a dot (.).
  */
 const normalizeNumberString = function(numberString) {
-    const cleanNumberString = numberString.trim();
-    const hasDots = cleanNumberString.indexOf('.') !== -1;
-    const hasCommas = cleanNumberString.indexOf(',') !== -1;
+
+    const hasDots = numberString.indexOf('.') !== -1;
+    const hasCommas = numberString.indexOf(',') !== -1;
 
     // Case 1: Both dots and commas are present
     if (hasDots && hasCommas) {
-        const lastDotPosition = cleanNumberString.lastIndexOf('.');
-        const lastCommaPosition = cleanNumberString.lastIndexOf(',');
+        const lastDotPosition = numberString.lastIndexOf('.');
+        const lastCommaPosition = numberString.lastIndexOf(',');
         
         if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
-            return cleanNumberString.split('.').join('').replace(',', '.');
+            return numberString.replaceAll('.', '').replace(',', '.');
         } else { // US format: "1,234.56"
-            return cleanNumberString.split(',').join('');
+            return numberString.replaceAll(',', '');
         }
     }
 
     // Case 2: Only commas are present
     else if (hasCommas) {
-        const commaCount = cleanNumberString.split(',').length - 1;
+        const commaCount = numberString.split(',').length - 1;
         if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
-            return cleanNumberString.split(',').join('');
+            return numberString.replaceAll(',', '');
         } else { // A single comma is a decimal separator: "123,45"
-            return cleanNumberString.replace(',', '.');
+            return numberString.replace(',', '.');
         }
     }
 
     // Case 3: Only dots are present
     else if (hasDots) {
-        const dotsCount = cleanNumberString.split('.').length - 1;
+        const dotsCount = numberString.split('.').length - 1;
         if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
-            return cleanNumberString.split('.').join('');
+            return numberString.replaceAll('.', '');
         } else { // A single dot is a decimal separator: "123.45"
-            return cleanNumberString;
+            return numberString;
         }
     }
 
     // Case 4: No separators are present
     else {
-        return cleanNumberString; // The string is a plain integer like "1234".
+        return numberString; // The string is a plain integer like "1234".
     }
 };
 
@@ -129,7 +136,7 @@ const getTypedValue = function (rawValue, desiredType, varName) {
         return rawValue;
     }
     //String conversion
-    const stringValue = '' + rawValue;
+    const stringValue = ('' + rawValue).trim();
     switch (desiredType) {
         case 'number':
             // Call the dedicated normalization function
@@ -183,24 +190,22 @@ const logProcessedParameters = function (parameters) {
 
 // --- MAIN EXECUTION FLOW ---
 
-// Get the custom dataLayer name or default to 'dataLayer'.
-const dataLayerName = data.dataLayerName || 'dataLayer';
 // Verify permission to access the dataLayer before proceeding.
 if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
     // Create the queue for the specified dataLayer.
     const dataLayerPush = createQueue(dataLayerName);
     // Initialize the base event object.
-    let eventData = { "event": data.eventName };
-    log('info', 'Preparing to push event: "' + data.eventName + '" to dataLayer: "' + dataLayerName + '"');
+    let eventData = { "event": eventName };
+    log('info', 'Preparing to push event: "' + eventName + '" to dataLayer: "' + dataLayerName + '"');
     // Process custom parameters if the user has enabled them.
-    if (data.addEventData) {
+    if (addEventData) {
         //log event data table if debugMode is active
-        if (data.debugMode) {
-            logTable(data.varSet, "Raw Event Parameters Table");
+        if (debugMode) {
+            logTable(eventParameters, "Raw Event Parameters Table");
         }
         const finalParameters = {};
         // Loop over each row in the parameter table.
-        data.varSet.forEach(function (row) {
+        eventParameters.forEach(function (row) {
             // Call the helper function to convert the raw value to its desired type.
             const typedValue = getTypedValue(row.varValue, row.varType, row.varName);
             // Only add the parameter if the type conversion was successful
@@ -213,7 +218,7 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
             eventData[key] = finalParameters[key];
         });
         //log processed parameter if debugMode is active
-        if (data.debugMode) {
+        if (debugMode) {
             // Call the new, isolated logging function.
             logProcessedParameters(finalParameters);
         }
@@ -222,7 +227,7 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
     }
     // Push the final object to the dataLayer.
     dataLayerPush(eventData);
-    log('info', 'Event "' + data.eventName + '" successfully pushed to "' + dataLayerName + '".');    
+    log('info', 'Event "' + eventName + '" successfully pushed to "' + dataLayerName + '".');    
     // Signal success to GTM.
     data.gtmOnSuccess();
 } else {
