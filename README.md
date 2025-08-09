@@ -12,7 +12,7 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
 ![Example](images/gtm-magic-custom-event-tag-settings.jpg)
 ---
 ## Advaced Settings
--   **Custom Data Layer Support**: Works with websites that use a custom name for the `dataLayer` variable.
+-   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
 ![Example](images/gtm-magic-custom-event-tag-advanced-settings.jpg)
@@ -37,7 +37,7 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
             -   **Inherit from Variable**: (Default) preserve the original type from the data source.
             -   **String/Number/Boolean**: Forces the value to be converted and validated as the selected type.
 -   **Advanced Settings**
-    -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named dataLayer. **Note**: After saving, you must manually update the tag's "Accesses Globals" permission to include your custom Data Layer name.
+    -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named "dataLayer". **Note**: After saving, you must manually update the tag's "Accesses Globals" permission to include your custom Data Layer name.
     -   **Enable Debug Mode**: Check this to see detailed raw and processed data logs in the browser's console during testing.
 
 ---
