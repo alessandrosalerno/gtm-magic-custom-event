@@ -17,7 +17,7 @@ const JSON = require('JSON');
 const eventName       = data.eventName;
 const dataLayerName   = data.dataLayerName || 'dataLayer';
 const addEventData   = data.addEventData || false;
-const eventParameters = data.varSet || [];
+const eventParameters = data.varSet;
 const debugMode     = data.debugMode || false;
 
 // --- Helper Functions ---
@@ -59,26 +59,55 @@ const isIntegerString = function (str) {
 };
 
 /**
- * Sets a nested property on an object using a dot-notation path, automatically creating arrays for numeric keys (e.g., 'products.0.name').
+ * Sets a nested property on an object using a dot-notation path.
+ * It automatically creates objects or arrays and overwrites primitive values if a conflict occurs.
  */
 const setNestedValue = function (obj, path, value) {
     // Exit early if input is invalid or path is empty
     if (!obj || typeof path !== 'string' || !path.length) return;
+
     const keys = path.split('.');
     let current = obj;
+
     for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];
         const nextKey = keys[i + 1];
         const isNextKeyAnIndex = isIntegerString(nextKey);
+
+        const currentLevel = current[key];
+        const currentLevelType = typeof currentLevel;
+        const isObject = currentLevelType === 'object' && currentLevel !== null;
+        
+        // Duck-typing: Check if it's an object and has a .push method to identify it as an array.
+        const isActualArray = isObject && typeof currentLevel.push === 'function';
+
+        // If the next key is an index, we need an array.
         if (isNextKeyAnIndex) {
-            current[key] = current[key] || [];
-        } else {
-            current[key] = current[key] || {};
+            // If the current level is not already an array, overwrite it.
+            if (!isActualArray) {
+                // Log the overwrite action if a value already exists.
+                if (currentLevel !== undefined) {
+                    log('warn', 'Data conflict on key "' + key + '": Overwriting existing value "' + currentLevel + '" (type: ' + currentLevelType + ') with an empty Array to allow numeric indexing.');
+                }
+                current[key] = [];
+            }
+        } 
+        // Otherwise, we need an object.
+        else {
+            // If the current level is not a non-array object, overwrite it.
+            if (!isObject || isActualArray) {
+                // Log the overwrite action if a value already exists.
+                if (currentLevel !== undefined) {
+                    log('warn', 'Data conflict on key "' + key + '": Overwriting existing value (type: ' + (isActualArray ? 'Array' : currentLevelType) + ') with an empty Object.');
+                }
+                current[key] = {};
+            }
         }
         current = current[key];
     }
     current[keys[keys.length - 1]] = value;
 };
+
 
 /**
  * Normalizes a string representing a number, handling both European and US formats.
