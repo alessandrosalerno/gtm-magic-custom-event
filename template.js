@@ -233,24 +233,17 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
         if (debugMode) {
             logTable(eventParameters, "Raw Event Parameters Table");
         }
-        const finalParameters = {};
-        // Loop over each row in the parameter table.
         eventParameters.forEach(function (row) {
-            // Call the helper function to convert the raw value to its desired type.
             const typedValue = getTypedValue(row.varValue, row.varType, row.varName);
-            // Only add the parameter if the type conversion was successful
             if (typedValue !== undefined) {
-                setNestedValue(finalParameters, row.varName, typedValue);
+                // Modifichiamo direttamente eventData
+                setNestedValue(eventData, row.varName, typedValue);
             }
-        });
-        // Directly assign processed parameters to event object
-        Object.keys(finalParameters).forEach(function (key) {
-            eventData[key] = finalParameters[key];
         });
         //log processed parameter if debugMode is active
         if (debugMode) {
             // Call the new, isolated logging function.
-            logProcessedParameters(finalParameters);
+            logProcessedParameters(eventData);
         }
     } else {        
         log('info', ' Pushing basic event only. No event parameters were added ("addEventData" is false)');      
