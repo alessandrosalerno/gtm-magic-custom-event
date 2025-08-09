@@ -194,6 +194,7 @@ const createQueue = require('createQueue');
 const logToConsole = require('logToConsole');
 const Object = require('Object');
 const makeNumber = require('makeNumber');
+const makeString = require('makeString');
 const JSON = require('JSON');
 
 // --- Inputs ---
@@ -320,7 +321,7 @@ const getTypedValue = function (rawValue, desiredType, varName) {
         return rawValue;
     }
     //String conversion and sanitize
-    const stringValue = ('' + rawValue).trim().split('"').join(' ').split("'").join(' ');
+    const stringValue = makeString(rawValue).trim();
     switch (desiredType) {
         case 'number':
             // Call the dedicated normalization function
