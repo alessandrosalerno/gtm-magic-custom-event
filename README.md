@@ -9,6 +9,12 @@ A Google Tag Manager Custom Tag Template to push custom events and structured da
 -   **Advanced Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean` or use "Inherit" to preserve the original type from the data source.
 -   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
 
+**Important Notes**
+Data Conflict Resolution (Overwrite Behavior)
+To prevent runtime errors, this template will automatically resolve data type conflicts. For example, if you first define a parameter as a number (e.g., user.id = 123) and later try to use it as an object (e.g., user.id.name = 'Alex'), the template will overwrite the number 123 with an object {} to accommodate the new structure.
+
+This behavior ensures the tag always fires successfully. When Debug Mode is enabled, any such overwrite will be clearly reported in the browser's console with a warn message, so you can easily track how your data structures are being built.
+
 ![Example](images/gtm-magic-custom-event-tag-settings.jpg)
 ---
 ## Advaced Settings
