@@ -3,4 +3,4 @@ documentation: 'https://github.com/alessandrosalerno/gtm-magic-custom-event/'
 
 versions:
   - sha: 16a06f31da550d09e082e9cb8ae678845babbfce
-    changeNotes: Initial release of the Magic Custom Event tag.
+    changeNotes: Initial release of the GTM Magic Custom Event tag.
