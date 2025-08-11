@@ -35,8 +35,10 @@ A GTM template that pushes custom events and structured data by dynamically cons
         -   **Variable**: The key for your data point. Dot notation is supported (e.g., `ecommerce.value`, `ecommerce.items.0.price`).
         -   **Value**: The value for your data point. You can type a static value or insert a GTM Variable.
         -   **Data Type**: Specify the data type for the value.
-            -   **Inherit from Variable**: (Default) preserve the original type from the data source.
-            -   **String/Number/Boolean**: Forces the value to be converted and validated as the selected type.
+            -   **Inherit from Variable**: (Default) preserve the original type from the data source. This is the recommended option if you don't need type conversion.
+            -   **String** : Converts any input value into a text string. For example, the number 123 will become the string "123".
+            -   **Number** : Converts the input into a numeric format (floating-point). Handles different decimal and thousands separators, automatically converting values like "1,234.56" (US format) or "1.234,56" (EU format) into the standard numeric value 1234.56 .
+            -   **Boolean**: Coerces various string and numeric representations into a strict boolean true/false (True/False, 0/1, yes/no, granted/denied). The coercion logic is case-insensitive.
 -   **Advanced Settings**
     -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named "dataLayer". **Note**: After saving, you must manually update the tag's "Accesses Globals" permission to include your custom Data Layer name.
     -   **Enable Debug Mode**: Check this to see detailed raw and processed data logs in the browser's console during testing.
