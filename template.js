@@ -181,10 +181,10 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return numValue;
         case 'boolean':
             const lowerCaseValue = stringValue.toLowerCase();
-            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes' || lowerCaseValue === 'granted' ) {
+            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes' || lowerCaseValue === 'granted' || lowerCaseValue === 'on' || lowerCaseValue === 'accepted' || lowerCaseValue === 'enabled') {
                 return true;
             }
-            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no' || lowerCaseValue === 'denied') {
+            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no' || lowerCaseValue === 'denied' || lowerCaseValue === 'off' || lowerCaseValue === 'rejected' || lowerCaseValue === 'disabled') {
                 return false;
             }
             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
