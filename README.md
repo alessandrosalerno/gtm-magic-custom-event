@@ -15,7 +15,7 @@ A GTM template that pushes custom events and structured data by dynamically cons
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
-![Example](images/gtm-advanced-custom-event-push-setting-advanced-setting.jpg)
+![Example](images/gtm-advanced-custom-event-push-advanced-setting.jpg)
 ---
 ## How to Install
 
