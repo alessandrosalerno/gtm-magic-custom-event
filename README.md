@@ -10,7 +10,7 @@ A GTM template that pushes custom events and structured data by dynamically cons
 -   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
 
 ![Example](images/gtm-advanced-custom-event-push-setting.jpg)
-![Example](images/gtm-advanced-custom-event-datalayer-push.jpg)
+![Example](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
 ---
 ## Advaced Settings
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
