@@ -365,10 +365,10 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return numValue;
         case 'boolean':
             const lowerCaseValue = stringValue.toLowerCase();
-            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes') {
+            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes' || lowerCaseValue === 'granted' ) {
                 return true;
             }
-            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no') {
+            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no' || lowerCaseValue === 'denied') {
                 return false;
             }
             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
@@ -429,7 +429,7 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
         if (debugMode) {
             const paramsToLog = {};
             Object.keys(eventData).forEach(function(key) {
-                if (key !== 'event') { // Esclude la chiave 'event'
+                if (key !== 'event') {
                     paramsToLog[key] = eventData[key];
                 }
             });
