@@ -9,13 +9,13 @@ A GTM template that pushes custom events and structured data by dynamically cons
 -   **Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean` or use "Inherit" to preserve the original type from the data source.
 -   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
 
-![Example](images/gtm-magic-custom-event-tag-settings.jpg)
+![Example](images/gtm-advanced-custom-event-push-setting.jpg)
 ---
 ## Advaced Settings
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
-![Example](images/gtm-magic-custom-event-tag-advanced-settings.jpg)
+![Example](images/gtm-advanced-custom-event-push-setting-advanced-setting.jpg)
 ---
 ## How to Install
 
