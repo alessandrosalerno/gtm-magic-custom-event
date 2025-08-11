@@ -1,5 +1,7 @@
 /**
-* Magic Custom Event: A GTM template to push custom events and structured data.
+* GTM Advanced Custom Event Push:
+* A GTM template that pushes custom events and structured data by dynamically constructing dataLayer objects,
+* offering explicit control over data types and nesting via dot notation.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
@@ -17,7 +19,7 @@ const JSON = require('JSON');
 const eventName       = data.eventName;
 const dataLayerName   = data.dataLayerName || 'dataLayer';
 const addEventData   = data.addEventData || false;
-const eventParameters = data.varSet;
+const eventParameters = data.varSet || [];
 const debugMode     = data.debugMode || false;
 
 // --- Helper Functions ---
@@ -78,8 +80,7 @@ const setNestedValue = function (obj, path, value) {
         const currentLevelType = typeof currentLevel;
         const isObject = currentLevelType === 'object' && currentLevel !== null;
         
-        // Duck-typing: Check if it's an object and has a .push method to identify it as an array.
-        const isActualArray = isObject && typeof currentLevel.push === 'function';
+        const isActualArray = isObject && typeof currentLevel.length === 'number';
 
         // If the next key is an index, we need an array.
         if (isNextKeyAnIndex) {
@@ -180,10 +181,10 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return numValue;
         case 'boolean':
             const lowerCaseValue = stringValue.toLowerCase();
-            if (lowerCaseValue === 'true' || lowerCaseValue === '1') {
+            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes') {
                 return true;
             }
-            if (lowerCaseValue === 'false' || lowerCaseValue === '0') {
+            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no') {
                 return false;
             }
             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
@@ -242,8 +243,13 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
         });
         //log processed parameter if debugMode is active
         if (debugMode) {
-            // Call the new, isolated logging function.
-            logProcessedParameters(eventData);
+            const paramsToLog = {};
+            Object.keys(eventData).forEach(function(key) {
+                if (key !== 'event') { // Esclude la chiave 'event'
+                    paramsToLog[key] = eventData[key];
+                }
+            });
+            logProcessedParameters(paramsToLog);
         }
     } else {        
         log('info', ' Pushing basic event only. No event parameters were added ("addEventData" is false)');      
