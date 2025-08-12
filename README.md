@@ -15,7 +15,7 @@ A GTM template that pushes custom events and structured data by dynamically cons
 ---
 ### ## Advanced Array Manipulation
 
-Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' field supports special operators for powerful, dynamic array manipulation.
+Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' field supports special operators dynamic array manipulation.
 
 | Operator | Name | Use Case | Description | Examples |
 | :--- | :--- | :--- | :--- | :--- |
