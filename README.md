@@ -13,16 +13,17 @@ A GTM template that pushes custom events and structured data by dynamically cons
 ![Example](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
 
 ---
-## Advanced Array Manipulation
+### ## Advanced Array Manipulation
 
 Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' field supports special operators for powerful, dynamic array manipulation.
 
-| Operator | Name | Description | Example |
-| :--- | :--- | :--- | :--- |
-| `++` | Append / Push | Appends a value to the end of an array. If followed by more path segments (e.g., `.name`), it appends a new object and sets the property on it. | `related_docs_ids.++`<br>`requested_features.++.name` |
-| `+0` | Prepend / Unshift | Adds a new object to the beginning of an array and sets the specified property on it. | `requested_features.+0.name` |
-| `-1` | Last Element | Selects the last element of an array, allowing you to read or modify its properties. This is especially useful after appending a new element. | `requested_features.-1.priority` |
-| `*` | Wildcard / For-Each | Applies the modification to **all** elements within an array. This is useful for adding a common property to every object in a list. | `requested_features.*.status` |
+| Operator | Name | Use Case | Description | Examples |
+| :--- | :--- | :--- | :--- | :--- |
+| `++` | Append / Push | **Direct Value**<br>**Object Property** | Appends a value directly to the end of an array, or appends a new object and sets a property on it. | `related_docs_ids.++`<br>`requested_features.++.name` |
+| `+0` | Prepend / Unshift | **Direct Value**<br>**Object Property** | Prepends a value directly to the beginning of an array, or prepends a new object and sets a property on it. | `related_docs_ids.+0`<br>`requested_features.+0.name` |
+| `-1` | Last Element | **Object Property** | Selects the last element of an array to modify one of its properties. **Must be followed by a property path.** | `requested_features.-1.priority` |
+| `*` | Wildcard / For-Each | **Object Property** | Applies a modification to all elements in an array. **Must be followed by a property path.** | `requested_features.*.status` |
+
 ---
 ## Advaced Settings
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
