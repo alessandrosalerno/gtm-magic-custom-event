@@ -24,6 +24,9 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 | `-1` | Last Element | **Object Property** | Selects the last element of an array to modify one of its properties. **Must be followed by a property path.** | `requested_features.-1.priority` |
 | `*` | Wildcard / For-Each | **Object Property** | Applies a modification to all elements in an array. **Must be followed by a property path.** | `requested_features.*.status` |
 
+![Example](images/gtm-advanced-custom-event-push-array-manipulation.jpg)
+![Example](images/gtm-advanced-custom-event-push-array-push.jpg)
+
 ---
 ## Advaced Settings
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
