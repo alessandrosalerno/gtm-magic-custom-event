@@ -1,7 +1,7 @@
-/**
+/*
 * GTM Advanced Custom Event Push:
-* A GTM template that pushes custom events and structured data by dynamically constructing dataLayer objects,
-* offering explicit control over data types and nesting via dot notation.
+* A GTM template that pushes custom events by building complex dataLayer objects,
+* offering explicit control over data types, nesting, and array manipulation via dot notation.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
@@ -14,13 +14,14 @@ const Object = require('Object');
 const makeNumber = require('makeNumber');
 const makeString = require('makeString');
 const JSON = require('JSON');
+const getType = require('getType');
 
 // --- Inputs ---
-const eventName       = data.eventName;
-const dataLayerName   = data.dataLayerName || 'dataLayer';
-const addEventData   = data.addEventData || false;
+const eventName = data.eventName;
+const dataLayerName = data.dataLayerName || 'dataLayer';
+const addEventData = data.addEventData || false;
 const eventParameters = data.varSet || [];
-const debugMode     = data.debugMode || false;
+const debugMode = data.debugMode || false;
 
 // --- Helper Functions ---
 
@@ -61,60 +62,136 @@ const isIntegerString = function (str) {
 };
 
 /**
- * Sets a nested property on an object using a dot-notation path.
- * It automatically creates objects or arrays and overwrites primitive values if a conflict occurs.
+ * Helper for setNestedValue - Handles the '*' wildcard operator by recursively calling setNestedValue on each array element.
  */
+const handleWildcard = function(current, keys, currentIndex, value) {
+    if (getType(current) !== 'array') {
+        log('error', 'Cannot use wildcard "*" on a non-array.');
+        return;
+    }
+    const remainingPath = keys.slice(currentIndex + 1).join('.');
+    current.forEach(function(element) {
+        if (getType(element) === 'object' || getType(element) === 'array') {
+            setNestedValue(element, remainingPath, value);
+        }
+    });
+};
+
+/**
+ * Helper for setNestedValue - Handles the dynamic array push/unshift operators ('++' and '+0') within a path.
+ */
+const handleDynamicPushInPath = function(current, key) {
+    if (getType(current) !== 'array') {
+        log('error', 'Cannot use dynamic push on a non-array.');
+        return null; // Return null to indicate failure
+    }
+    const newObject = {};
+    if (key === '++') {
+        current.push(newObject);
+    } else {
+        current.unshift(newObject);
+    }
+    return newObject;
+};
+
+/**
+ * Helper for setNestedValue - Ensures that the structure at the current key is of the correct type (array or object).
+ */
+const ensureStructure = function(current, key, nextKey) {
+    const currentLevel = current[key];
+    const currentLevelType = getType(currentLevel);
+    const needsArray = (nextKey === '++' || nextKey === '+0' || nextKey === '-1' || nextKey === '*' || isIntegerString(nextKey));
+
+    if (needsArray) {
+        if (currentLevelType !== 'array') {
+            if (currentLevel !== undefined) {
+                log('warn', 'Data conflict on key "' + key + '": Overwriting with an Array.');
+            }
+            current[key] = [];
+        }
+    } else {
+        if (currentLevelType !== 'object') {
+            if (currentLevel !== undefined) {
+                log('warn', 'Data conflict on key "' + key + '": Overwriting with an Object.');
+            }
+            current[key] = {};
+        }
+    }
+};
+
+/**
+ * Helper for setNestedValue - Assigns the final value at the end of the path, handling special operators.
+ */
+const assignFinalValue = function(current, finalKey, value) {
+    // Resolve '-1' if it's the final key in the path.
+    if (finalKey === '-1' && getType(current) === 'array') {
+        if (current.length === 0) {
+            log('error', 'Cannot use "-1" on an empty array.');
+            return;
+        }
+        finalKey = current.length - 1;
+    }
+
+    // Handle direct push/unshift of a value.
+    if (finalKey === '++' || finalKey === '+0') {
+        if (getType(current) !== 'array') {
+            log('error', 'Cannot use dynamic push on a non-array.');
+            return;
+        }
+        if (finalKey === '++') {
+            current.push(value);
+        } else {
+            current.unshift(value);
+        }
+    } else {
+        // Standard assignment for all other keys.
+        current[finalKey] = value;
+    }
+};
+
+/**
+ * Sets a nested property on an object using a dot-notation path.
+ * This is the main orchestrator function.
+ */
 const setNestedValue = function (obj, path, value) {
-    // Exit early if input is invalid or path is empty
     if (!obj || typeof path !== 'string' || !path.length) return;
 
     const keys = path.split('.');
     let current = obj;
 
     for (let i = 0; i < keys.length - 1; i++) {
-        const key = keys[i];
-        const nextKey = keys[i + 1];
-        const isNextKeyAnIndex = isIntegerString(nextKey);
+        let key = keys[i];
 
-        const currentLevel = current[key];
-        const currentLevelType = typeof currentLevel;
-        const isObject = currentLevelType === 'object' && currentLevel !== null;
-        
-        const isActualArray = isObject && typeof currentLevel.length === 'number';
-
-        // If the next key is an index, we need an array.
-        if (isNextKeyAnIndex) {
-            // If the current level is not already an array, overwrite it.
-            if (!isActualArray) {
-                // Log the overwrite action if a value already exists.
-                if (currentLevel !== undefined) {
-                    log('warn', 'Data conflict on key "' + key + '": Overwriting existing value "' + currentLevel + '" (type: ' + currentLevelType + ') with an empty Array to allow numeric indexing.');
-                }
-                current[key] = [];
-            }
-        } 
-        // Otherwise, we need an object.
-        else {
-            // If the current level is not a non-array object, overwrite it.
-            if (!isObject || isActualArray) {
-                // Log the overwrite action if a value already exists.
-                if (currentLevel !== undefined) {
-                    log('warn', 'Data conflict on key "' + key + '": Overwriting existing value (type: ' + (isActualArray ? 'Array' : currentLevelType) + ') with an empty Object.');
-                }
-                current[key] = {};
-            }
+        if (key === '*') {
+            handleWildcard(current, keys, i, value);
+            return;
         }
+
+        if (key === '-1' && getType(current) === 'array') {
+            if (current.length > 0) key = current.length - 1;
+            else { log('error', 'Cannot use "-1" on an empty array.'); return; }
+        }
+
+        if (key === '++' || key === '+0') {
+            const newCurrent = handleDynamicPushInPath(current, key);
+            if (newCurrent) {
+                current = newCurrent;
+                continue;
+            } else return; // Stop if there was an error
+        }
+
+        ensureStructure(current, key, keys[i + 1]);
         current = current[key];
     }
-    current[keys[keys.length - 1]] = value;
+    
+    assignFinalValue(current, keys[keys.length - 1], value);
 };
-
 
 /**
  * Normalizes a string representing a number, handling both European and US formats.
  * It removes thousand separators and standardizes the decimal separator to a dot (.).
  */
-const normalizeNumberString = function(numberString) {
+const normalizeNumberString = function (numberString) {
 
     const hasDots = numberString.indexOf('.') !== -1;
     const hasCommas = numberString.indexOf(',') !== -1;
@@ -123,7 +200,7 @@ const normalizeNumberString = function(numberString) {
     if (hasDots && hasCommas) {
         const lastDotPosition = numberString.lastIndexOf('.');
         const lastCommaPosition = numberString.lastIndexOf(',');
-        
+
         if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
             return numberString.split('.').join('').split(',').join('.');
         } else { // US format: "1,234.56"
@@ -237,26 +314,25 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
         eventParameters.forEach(function (row) {
             const typedValue = getTypedValue(row.varValue, row.varType, row.varName);
             if (typedValue !== undefined) {
-                // Modifichiamo direttamente eventData
                 setNestedValue(eventData, row.varName, typedValue);
             }
         });
         //log processed parameter if debugMode is active
         if (debugMode) {
             const paramsToLog = {};
-            Object.keys(eventData).forEach(function(key) {
-                if (key !== 'event') { 
+            Object.keys(eventData).forEach(function (key) {
+                if (key !== 'event') {
                     paramsToLog[key] = eventData[key];
                 }
             });
             logProcessedParameters(paramsToLog);
         }
-    } else {        
-        log('info', ' Pushing basic event only. No event parameters were added ("addEventData" is false)');      
+    } else {
+        log('info', ' Pushing basic event only. No event parameters were added ("addEventData" is false)');
     }
     // Push the final object to the dataLayer.
     dataLayerPush(eventData);
-    log('info', 'Event "' + eventName + '" successfully pushed to "' + dataLayerName + '".');    
+    log('info', 'Event "' + eventName + '" successfully pushed to "' + dataLayerName + '".');
     // Signal success to GTM.
     data.gtmOnSuccess();
 } else {
