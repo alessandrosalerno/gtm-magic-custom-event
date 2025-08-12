@@ -25,7 +25,7 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 | `*` | Wildcard / For-Each | **Object Property** | Applies a modification to all elements in an array. **Must be followed by a property path.** | `requested_features.*.status` |
 
 ![Example](images/gtm-advanced-custom-event-push-array-manipulation.jpg)
-![Example](images/gtm-advanced-custom-event-push-array-push.jpg)
+![Example](images/gtm-advanced-custom-event-push-array-datalayer-push.jpg)
 
 ---
 ## Advaced Settings
