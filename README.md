@@ -47,7 +47,7 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 
 -   **Event Name**: The name of the event to push to the dataLayer (e.g., `click_and_scroll`).
 -   **Add Event Data**: Check this box to add custom parameters to the event.
-    -   **Event Parameters Table**:
+    -   **Event Parameters**:
         -   **Variable**: The key for your data point. Dot notation is supported (e.g., `ecommerce.value`, `ecommerce.items.0.price`).
         -   **Value**: The value for your data point. You can type a static value or insert a GTM Variable.
         -   **Data Type**: Specify the data type for the value.
@@ -55,6 +55,7 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
             -   **String** : Converts any input value into a text string. For example, the number 123 will become the string "123".
             -   **Number** : Converts the input into a numeric format (floating-point). Handles different decimal and thousands separators, automatically converting values like "1,234.56" (US format) or "1.234,56" (EU format) into the standard numeric value 1234.56 .
             -   **Boolean**: Coerces various string and numeric representations into a strict boolean true/false (True/False, 1/0, yes/no, granted/denied, on/off, accepted/rejected). The coercion logic is case-insensitive.
+            -   **Array/Object**: Converts a JSON-formatted string into a live JavaScript object or array. This is useful for handling complex data structures passed as a single string. For example, `{"id": "A123", "available": true}` becomes a usable object.
 -   **Advanced Settings**
     -   **Use a custom Data Layer name**: Enable this if your website's Data Layer variable is not named "dataLayer". **Note**: After saving, you must manually update the tag's "Accesses Globals" permission to include your custom Data Layer name.
     -   **Enable Debug Mode**: Check this to see detailed raw and processed data logs in the browser's console during testing.
