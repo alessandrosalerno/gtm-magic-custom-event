@@ -103,6 +103,10 @@ ___TEMPLATE_PARAMETERS___
             "displayValue": "Boolean"
           },
           {
+            "value": "object",
+            "displayValue": "Array/Object"
+          },
+          {
             "value": "inherit",
             "displayValue": "Inherit"
           }
@@ -187,7 +191,7 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 * A GTM template that pushes custom events by building complex dataLayer objects,
 * offering explicit control over data types, nesting, and array manipulation via dot notation.
 * @author Alessandro Salerno
-* @version 1.0.0
+* @version 1.1.0
 */
 
 // --- APIs ---
@@ -452,6 +456,14 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return undefined;
         case 'string':
             return stringValue;
+        case 'object':
+            const parsedValue = JSON.parse(stringValue);
+            // Check for valid JSON string
+            if (parsedValue === undefined) {
+                log('warn', 'Value for key "' + varName + '" could not be parsed as JSON and was skipped.');
+                return undefined;
+            }
+            return parsedValue;
     }
     // Fallback for any unexpected 'desiredType' values.
     return rawValue;
@@ -621,6 +633,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 13/08/2025, 15:35:38
+Created on 13/08/2025, 21:46:47
 
 
