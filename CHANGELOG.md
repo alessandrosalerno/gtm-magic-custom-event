@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 ## [1.1.0] - 2025-08-13
 
 ### Added
-- Added a new `JSONparse` type option to the parameter table.
+- Added a new `Array/Object` type option to the parameter table.
 - This new option allows converting a JSON-formatted string (from a variable or an input field) into a JavaScript object or array.
 
 ---
