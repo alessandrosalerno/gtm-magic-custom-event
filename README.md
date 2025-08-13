@@ -1,6 +1,6 @@
 # GTM Advanced Custom Event Push
 
-A GTM template that pushes custom events and structured data by dynamically constructing dataLayer objects, offering explicit control over data types and nesting via dot notation.
+A GTM template for pushing custom events, featuring dynamic dataLayer object construction with dot notation, special operators for array manipulation, explicit data type control, and JSON string parsing.
 
 ---
 ## Features
