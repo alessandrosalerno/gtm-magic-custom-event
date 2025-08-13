@@ -1,11 +1,15 @@
-homepage: 'https://www.linkedin.com/in/salernoalessandro/'
+homepage: 'https://github.com/alessandrosalerno/gtm-advanced-custom-event-push/'
 documentation: 'https://github.com/alessandrosalerno/gtm-advanced-custom-event-push/'
 
 versions:
   # Latest version
-  - sha: 5f02a788b90ae804f86b04aa24af8937e567874c
+  - sha: 23efe799774e68a3431316b4094f55026f36d72b
     changeNotes: |2
-        Add Array Object options
+      Version 1.1.0
+      Added a new 'JSONparse' data type to directly convert a JSON-formatted string into a live JavaScript object or array.
+
   # Older versions
   - sha: bec0164eda03e77e3dccd2d909821b5ded81cda3
-    changeNotes: Initial release of the GTM Advanced Custom Event Push.
+    changeNotes: |2
+      Version 1.0.0
+      Initial release of the GTM Advanced Custom Event Push.
