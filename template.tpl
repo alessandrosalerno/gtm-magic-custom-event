@@ -14,7 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Advanced Custom Event Push",
-    "categories": [
+  "categories": [
     "CONVERSIONS",
     "ANALYTICS",
     "UTILITY",
