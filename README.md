@@ -19,10 +19,10 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 
 | Operator | Name | Use Case | Description | Examples |
 | :--- | :--- | :--- | :--- | :--- |
-| `++` | Append / Push | **Direct Value**<br>**Object Property** | Appends a value directly to the end of an array, or appends a new object and sets a property on it. | `related_docs_ids.++`<br>`requested_features.++.name` |
-| `+0` | Prepend / Unshift | **Direct Value**<br>**Object Property** | Prepends a value directly to the beginning of an array, or prepends a new object and sets a property on it. | `related_docs_ids.+0`<br>`requested_features.+0.name` |
-| `-1` | Last Element | **Object Property** | Selects the last element of an array to modify one of its properties. **Must be followed by a property path.** | `requested_features.-1.priority` |
-| `*` | Wildcard / For-Each | **Object Property** | Applies a modification to all elements in an array. **Must be followed by a property path.** | `requested_features.*.status` |
+| `++` | Append / Push | **Direct Value**<br>or<br>**Object Property** | Appends a value directly to the end of an array, or appends a new object and sets a property on it. | `related_docs_ids.++`<br>`requested_features.++.name` |
+| `+0` | Prepend / Unshift | **Direct Value**<br>or<br>**Object Property** | Prepends a value directly to the beginning of an array, or prepends a new object and sets a property on it. | `related_docs_ids.+0`<br>`requested_features.+0.name` |
+| `-1` | Last Element<br>(Selector) | **Object Property** | Selects the last element of an array to modify one of its properties. **Must be followed by a property path.** | `requested_features.-1.priority` |
+| `*` | Wildcard / For-Each<br>(Selector) | **Object Property** | Selects all elements in an array and applies a modification. **Must be followed by a property path.** | `requested_features.*.status` |
 
 ![Example](images/gtm-advanced-custom-event-push-array-manipulation.jpg)
 ![Example](images/gtm-advanced-custom-event-push-array-datalayer-push.jpg)
