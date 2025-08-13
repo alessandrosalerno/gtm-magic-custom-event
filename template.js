@@ -41,7 +41,7 @@ const logTable = function (table, tableName) {
     table.forEach(function (row, i) {
         let logMessage = (tableName ? tableName + ' - ' : '') + 'Row ' + i + ': ';
         Object.keys(row).forEach(function (key) {
-            logMessage += key + '=' + row[key] + ' | ';
+            logMessage += key + '=' + JSON.stringify(row[key]) + ' | ';
         });
         log('info', logMessage.slice(0, -2));
     });
