@@ -2,5 +2,5 @@ homepage: 'https://www.linkedin.com/in/salernoalessandro/'
 documentation: 'https://github.com/alessandrosalerno/gtm-advanced-custom-event-push/'
 
 versions:
-  - sha: ef0d509392f8ad0dcbfd6ed6f9e5829d8e5ca240
+  - sha: bec0164eda03e77e3dccd2d909821b5ded81cda3
     changeNotes: Initial release of the GTM Advanced Custom Event Push.
