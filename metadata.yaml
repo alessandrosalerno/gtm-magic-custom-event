@@ -6,7 +6,7 @@ versions:
   - sha: 0153c064a34d12272c499cbf938796917fb72c97
     changeNotes: |2
       Version 1.1.0
-      Added a new 'JSONparse' data type to directly convert a JSON-formatted string into a live JavaScript object or array.
+      Added a new 'Array/Object' data type to directly convert a JSON-formatted string into a live JavaScript object or array.
 
   # Older versions
   - sha: bec0164eda03e77e3dccd2d909821b5ded81cda3
