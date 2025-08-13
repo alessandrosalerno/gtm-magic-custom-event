@@ -14,13 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Advanced Custom Event Push",
-  "categories": [
-    "CONVERSIONS",
-    "ANALYTICS",
-    "UTILITY",
-    "ADVERTISING",
-    "PERSONALIZATION"
-  ],
+  "categories": ["CONVERSIONS","ANALYTICS","UTILITY","ADVERTISING","PERSONALIZATION"],
   "brand": {
     "id": "brand_dummy",
     "displayName": "AlessandroSalerno",
@@ -621,6 +615,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 11/08/2025, 10:00:00
+Created on 12/08/2025, 19:06:07
 
 
