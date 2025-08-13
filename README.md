@@ -5,15 +5,19 @@ A GTM template that pushes custom events and structured data by dynamically cons
 ---
 ## Features
 
--   **Flexible Event & Data Pushing**: Easily configure and push any event along with a custom set of structured data parameters.
--   **Data Type Handling**: Specify whether your data is a `String`, `Number`, or `Boolean` or use "Inherit" to preserve the original type from the data source.
--   **Dot Notation Support**: Create complex nested objects and arrays directly from the UI by using dot notation in parameter names (e.g., `ecommerce.items.0.item_name`).
+-   **Flexible Event & Data Pushing**: Push any event along with a completely custom set of structured data parameters.
+-   **Dot Notation Support**: Create complex nested objects and arrays using dot notation (e.g., `ecommerce.items.0.item_name`).
+-   **Advanced Array Manipulation**: Use special operators (`++`, `+0`, `*`, `-1`) to dynamically push, prepend, or modify elements in an array.
+-   **Rich Data Type Handling**:
+    -   **Conversion**: Explicitly set data as a `String`, `Number`, or `Boolean`.
+    -   **Parsing**: Convert a JSON-formatted string into a live object or array.
+    -   **Inheritance**: Preserve the original data type from a GTM Variable.
 
 ![Example](images/gtm-advanced-custom-event-push-setting.jpg)
 ![Example](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
 
 ---
-### ## Advanced Array Manipulation
+## Advanced Array Manipulation
 
 Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' field supports special operators dynamic array manipulation.
 
@@ -28,7 +32,7 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 ![Example](images/gtm-advanced-custom-event-push-array-datalayer-push.jpg)
 
 ---
-## Advaced Settings
+## Advanced Settings
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
