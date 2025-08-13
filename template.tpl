@@ -45,8 +45,7 @@ ___TEMPLATE_PARAMETERS___
     "type": "CHECKBOX",
     "name": "addEventData",
     "checkboxText": "Add event data",
-    "simpleValueType": true,
-    "subParams": []
+    "simpleValueType": true
   },
   {
     "type": "SIMPLE_TABLE",
@@ -63,6 +62,13 @@ ___TEMPLATE_PARAMETERS___
         "valueValidators": [
           {
             "type": "NON_EMPTY"
+          },
+          {
+            "type": "REGEX",
+            "args": [
+              ".*(?\u003c!\\.\\*|\\.-1)$"
+            ],
+            "errorMessage": "Paths cannot end with * or -1. These operators are selectors and must be followed by a property name"
           }
         ]
       },
@@ -178,8 +184,8 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 
 /*
 * GTM Advanced Custom Event Push:
-* A GTM template that pushes custom events and structured data by dynamically constructing dataLayer objects,
-* offering explicit control over data types and nesting via dot notation.
+* A GTM template that pushes custom events by building complex dataLayer objects,
+* offering explicit control over data types, nesting, and array manipulation via dot notation.
 * @author Alessandro Salerno
 * @version 1.0.0
 */
@@ -219,7 +225,7 @@ const logTable = function (table, tableName) {
     table.forEach(function (row, i) {
         let logMessage = (tableName ? tableName + ' - ' : '') + 'Row ' + i + ': ';
         Object.keys(row).forEach(function (key) {
-            logMessage += key + '=' + row[key] + ' | ';
+            logMessage += key + '=' + JSON.stringify(row[key]) + ' | ';
         });
         log('info', logMessage.slice(0, -2));
     });
@@ -615,6 +621,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 12/08/2025, 19:06:07
+Created on 13/08/2025, 15:35:38
 
 
