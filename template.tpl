@@ -66,9 +66,9 @@ ___TEMPLATE_PARAMETERS___
           {
             "type": "REGEX",
             "args": [
-              ".*(?\u003c!\\.\\*|\\.-1)$"
+              "^(?!.*\\.\\.).*(?\u003c!\\.\\*|\\.-1)$"
             ],
-            "errorMessage": "Paths cannot end with * or -1. These operators are selectors and must be followed by a property name"
+            "errorMessage": "Paths cannot contain empty segments (like a..b) or end with the * or -1 operators, which must be followed by a property name."
           }
         ]
       },
@@ -211,6 +211,13 @@ const addEventData = data.addEventData || false;
 const eventParameters = data.varSet || [];
 const debugMode = data.debugMode || false;
 
+// -- CONST --
+const ARRAY_OPERATORS = { PUSH: '++', UNSHIFT: '+0', LAST: '-1', WILDCARD: '*' };
+const PUSH_OPERATORS = [ARRAY_OPERATORS.PUSH, ARRAY_OPERATORS.UNSHIFT];
+const SELECTOR_OPERATORS = [ARRAY_OPERATORS.LAST, ARRAY_OPERATORS.WILDCARD];
+const BOOLEAN_TRUE_VALUES = ['true', '1', 'yes', 'granted', 'on', 'accepted', 'enabled'];
+const BOOLEAN_FALSE_VALUES = ['false', '0', 'no', 'denied', 'off', 'rejected', 'disabled'];
+
 // --- Helper Functions ---
 
 /**
@@ -250,6 +257,21 @@ const isIntegerString = function (str) {
 };
 
 /**
+ * Helper for setNestedValue - Check for push operators (++, +0)
+ */
+const isPushOperator = function(key) {
+    return PUSH_OPERATORS.indexOf(key) !== -1;
+};
+
+/**
+ * Helper for setNestedValue - Check for selector operators (-1, *)
+ */
+const isSelectorOperator = function(key) {
+    return SELECTOR_OPERATORS.indexOf(key) !== -1;
+};
+
+
+/**
  * Helper for setNestedValue - Handles the '*' wildcard operator by recursively calling setNestedValue on each array element.
  */
 const handleWildcard = function(current, keys, currentIndex, value) {
@@ -274,7 +296,7 @@ const handleDynamicPushInPath = function(current, key) {
         return null; // Return null to indicate failure
     }
     const newObject = {};
-    if (key === '++') {
+    if (key === ARRAY_OPERATORS.PUSH) {
         current.push(newObject);
     } else {
         current.unshift(newObject);
@@ -288,7 +310,7 @@ const handleDynamicPushInPath = function(current, key) {
 const ensureStructure = function(current, key, nextKey) {
     const currentLevel = current[key];
     const currentLevelType = getType(currentLevel);
-    const needsArray = (nextKey === '++' || nextKey === '+0' || nextKey === '-1' || nextKey === '*' || isIntegerString(nextKey));
+    const needsArray = (isPushOperator(nextKey) || isSelectorOperator(nextKey) || isIntegerString(nextKey));
 
     if (needsArray) {
         if (currentLevelType !== 'array') {
@@ -312,7 +334,7 @@ const ensureStructure = function(current, key, nextKey) {
  */
 const assignFinalValue = function(current, finalKey, value) {
     // Resolve '-1' if it's the final key in the path.
-    if (finalKey === '-1' && getType(current) === 'array') {
+    if (finalKey === ARRAY_OPERATORS.LAST && getType(current) === 'array') {
         if (current.length === 0) {
             log('error', 'Cannot use "-1" on an empty array.');
             return;
@@ -321,12 +343,12 @@ const assignFinalValue = function(current, finalKey, value) {
     }
 
     // Handle direct push/unshift of a value.
-    if (finalKey === '++' || finalKey === '+0') {
+    if (isPushOperator(finalKey)) {
         if (getType(current) !== 'array') {
             log('error', 'Cannot use dynamic push on a non-array.');
             return;
         }
-        if (finalKey === '++') {
+        if (finalKey === ARRAY_OPERATORS.PUSH) {
             current.push(value);
         } else {
             current.unshift(value);
@@ -350,17 +372,17 @@ const setNestedValue = function (obj, path, value) {
     for (let i = 0; i < keys.length - 1; i++) {
         let key = keys[i];
 
-        if (key === '*') {
+        if (key === ARRAY_OPERATORS.WILDCARD) {
             handleWildcard(current, keys, i, value);
             return;
         }
 
-        if (key === '-1' && getType(current) === 'array') {
+        if (key === ARRAY_OPERATORS.LAST && getType(current) === 'array') {
             if (current.length > 0) key = current.length - 1;
             else { log('error', 'Cannot use "-1" on an empty array.'); return; }
         }
 
-        if (key === '++' || key === '+0') {
+        if (isPushOperator(key)) {
             const newCurrent = handleDynamicPushInPath(current, key);
             if (newCurrent) {
                 current = newCurrent;
@@ -446,12 +468,14 @@ const getTypedValue = function (rawValue, desiredType, varName) {
             return numValue;
         case 'boolean':
             const lowerCaseValue = stringValue.toLowerCase();
-            if (lowerCaseValue === 'true' || lowerCaseValue === '1' || lowerCaseValue === 'yes' || lowerCaseValue === 'granted' || lowerCaseValue === 'on' || lowerCaseValue === 'accepted' || lowerCaseValue === 'enabled') {
+                        
+            if (BOOLEAN_TRUE_VALUES.indexOf(lowerCaseValue) !== -1) {
                 return true;
             }
-            if (lowerCaseValue === 'false' || lowerCaseValue === '0' || lowerCaseValue === 'no' || lowerCaseValue === 'denied' || lowerCaseValue === 'off' || lowerCaseValue === 'rejected' || lowerCaseValue === 'disabled') {
+            if (BOOLEAN_FALSE_VALUES.indexOf(lowerCaseValue) !== -1) {
                 return false;
             }
+
             log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Boolean and was skipped.');
             return undefined;
         case 'string':
@@ -633,6 +657,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 13/08/2025, 22:07:44
+Created on 14/08/2025, 18:20:03
 
 
