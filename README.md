@@ -13,8 +13,8 @@ A GTM template for pushing custom events, featuring dynamic dataLayer object con
     -   **Parsing**: Convert a JSON-formatted string into a live object or array.
     -   **Inheritance**: Preserve the original data type from a GTM Variable.
 
-![Example](images/gtm-advanced-custom-event-push-setting.jpg)
-![Example](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
+![Example setting](images/gtm-advanced-custom-event-push-setting.jpg)
+![Example push](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
 
 ---
 ## Advanced Array Manipulation
@@ -36,7 +36,7 @@ Beyond standard numeric indexing (e.g., `requested_features.0`), the 'Variable' 
 -   **Custom Data Layer Support**: Works with GTM that use a custom name for the `dataLayer` variable.
 -   **Conditional Debug Mode**: Enable detailed console logs for easy troubleshooting.
 
-![Example](images/gtm-advanced-custom-event-push-advanced-setting.jpg)
+![Example advanced setting](images/gtm-advanced-custom-event-push-advanced-setting.jpg)
 ---
 ## How to Install
 
