@@ -13,7 +13,7 @@ A GTM template for pushing custom events, featuring dynamic dataLayer object con
     -   **Parsing**: Convert a JSON-formatted string into a live object or array.
     -   **Inheritance**: Preserve the original data type from a GTM Variable.
 
-![Example setting](images/gtm-advanced-custom-event-push-setting.jpg)
+![Example setting](images/gtm-advanced-custom-event-push-settings.jpg)
 ![Example push](images/gtm-advanced-custom-event-push-datalayer-push.jpg)
 
 ---
