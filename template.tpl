@@ -398,50 +398,11 @@ const setNestedValue = function (obj, path, value) {
 };
 
 /**
- * Normalizes a string representing a number, handling both European and US formats.
- * It removes thousand separators and standardizes the decimal separator to a dot (.).
- */
-const normalizeNumberString = function (numberString) {
-
-    const hasDots = numberString.indexOf('.') !== -1;
-    const hasCommas = numberString.indexOf(',') !== -1;
-
-    // Case 1: Both dots and commas are present
-    if (hasDots && hasCommas) {
-        const lastDotPosition = numberString.lastIndexOf('.');
-        const lastCommaPosition = numberString.lastIndexOf(',');
-
-        if (lastCommaPosition > lastDotPosition) { // European format: "1.234,56"
-            return numberString.split('.').join('').split(',').join('.');
-        } else { // US format: "1,234.56"
-            return numberString.split(',').join('');
-        }
-    }
-
-    // Case 2: Only commas are present
-    else if (hasCommas) {
-        const commaCount = numberString.split(',').length - 1;
-        if (commaCount > 1) { // Multiple commas are thousand separators: "1,234,567"
-            return numberString.split(',').join('');
-        } else { // A single comma is a decimal separator: "123,45"
-            return numberString.split(',').join('.');
-        }
-    }
-
-    // Case 3: Only dots are present
-    else if (hasDots) {
-        const dotsCount = numberString.split('.').length - 1;
-        if (dotsCount > 1) { // Multiple dots are thousand separators: "1.234.567"
-            return numberString.split('.').join('');
-        } else { // A single dot is a decimal separator: "123.45"
-            return numberString;
-        }
-    }
-
-    // Case 4: No separators are present
-    else {
-        return numberString; // The string is a plain integer like "1234".
-    }
+ * Normalizes a number string by replacing a European-style decimal comma with a dot.
+ * This essential version assumes dots are not used as thousand separators.
+ */
+const normalizeNumberString = function(numberString) {
+    return numberString.replace(',', '.');
 };
 
 
