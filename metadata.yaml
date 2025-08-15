@@ -3,7 +3,7 @@ documentation: 'https://github.com/alessandrosalerno/gtm-advanced-custom-event-p
 
 versions:
   # Latest version
-  - sha: fcec0694d6305f214bbd2e9827eca7e4d5146672
+  - sha: d9ec3c5d9a20c0eb15cab2ddf6b15d2bd52ef9b0
     changeNotes: |2
       Version 1.1.0
       Added a new 'Array/Object' data type to directly convert a JSON-formatted string into a live JavaScript object or array.
