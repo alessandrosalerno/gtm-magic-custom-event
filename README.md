@@ -7,7 +7,7 @@ A GTM template for pushing custom events, featuring dynamic dataLayer object con
 
 -   **Flexible Event and Data Pushing**: Push any event along with a completely custom set of structured data parameters.
 -   **Dot Notation Support**: Create complex nested objects and arrays using dot notation (e.g., `ecommerce.items.0.item_name`).
--   **Advanced Array Manipulation**: Use special operators (`++`, `+0`, `*`, `-1`) to dynamically push, prepend, or modify elements in an array.
+-   **Advanced Array Manipulation**: Use special operators (`++`, `+0`, `*`, `-1`) to dynamically append, prepend, or modify elements in an array.
 -   **Rich Data Type Handling**:
     -   **Conversion**: Explicitly set data as a `String`, `Number`, or `Boolean`.
     -   **Parsing**: Convert a JSON-formatted string into a live object or array.
