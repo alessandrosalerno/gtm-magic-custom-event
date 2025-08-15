@@ -223,11 +223,7 @@ const BOOLEAN_FALSE_VALUES = ['false', '0', 'no', 'denied', 'off', 'rejected', '
 /**
  * Logs a message to the console only if debug mode is enabled.
  */
-const log = function (level, message) {
-    if (debugMode) {
-        logToConsole(level, message);
-    }
-};
+const log = (level, message) => debugMode && logToConsole(level, message);
 
 /**
  * Logs the content of a GTM UI table to the console for debugging.
@@ -241,50 +237,33 @@ const logTable = function (table, tableName) {
         log('info', logMessage.slice(0, -2));
     });
 };
+
 /**
  * Check for integer strings
  */
-const isIntegerString = function (str) {
-    if (!str || str.length === 0) {
-        return false;
-    }
+const isIntegerString = str => {
+    if (!str || str.length === 0) return false;
     const num = makeNumber(str);
-    // Checks for NaN, ensures it's a whole number (no decimals), and is not negative.
-    if (num !== num || num % 1 !== 0 || num < 0) {
-        return false;
-    }
-    return true;
+    if (num !== num) return false;  // NaN check
+    if (num % 1 !== 0) return false; // decimal check  
+    return num >= 0; // negative check
 };
-
-/**
- * Helper for setNestedValue - Check for push operators (++, +0)
- */
-const isPushOperator = function(key) {
-    return PUSH_OPERATORS.indexOf(key) !== -1;
-};
-
-/**
- * Helper for setNestedValue - Check for selector operators (-1, *)
- */
-const isSelectorOperator = function(key) {
-    return SELECTOR_OPERATORS.indexOf(key) !== -1;
-};
-
 
 /**
  * Helper for setNestedValue - Handles the '*' wildcard operator by recursively calling setNestedValue on each array element.
  */
-const handleWildcard = function(current, keys, currentIndex, value) {
+const handleWildcard = (current, keys, currentIndex, value) => {
     if (getType(current) !== 'array') {
         log('error', 'Cannot use wildcard "*" on a non-array.');
         return;
     }
     const remainingPath = keys.slice(currentIndex + 1).join('.');
-    current.forEach(function(element) {
-        if (getType(element) === 'object' || getType(element) === 'array') {
+    for (const element of current) {
+        const type = getType(element);
+        if (type === 'object' || type === 'array') {
             setNestedValue(element, remainingPath, value);
         }
-    });
+    }
 };
 
 /**
@@ -305,27 +284,21 @@ const handleDynamicPushInPath = function(current, key) {
 };
 
 /**
- * Helper for setNestedValue - Ensures that the structure at the current key is of the correct type (array or object).
- */
+ * Helper for setNestedValue - Ensures that the structure at the current key is of the correct type (array or object).
+ */
 const ensureStructure = function(current, key, nextKey) {
+    const requiredType = (PUSH_OPERATORS.indexOf(nextKey) !== -1 || SELECTOR_OPERATORS.indexOf(nextKey) !== -1 || isIntegerString(nextKey))
+        ? 'array' 
+        : 'object';
     const currentLevel = current[key];
     const currentLevelType = getType(currentLevel);
-    const needsArray = (isPushOperator(nextKey) || isSelectorOperator(nextKey) || isIntegerString(nextKey));
 
-    if (needsArray) {
-        if (currentLevelType !== 'array') {
-            if (currentLevel !== undefined) {
-                log('warn', 'Data conflict on key "' + key + '": Overwriting with an Array.');
-            }
-            current[key] = [];
+    if (currentLevelType !== requiredType) {
+        if (currentLevel !== undefined) {
+            const typeName = requiredType.charAt(0).toUpperCase() + requiredType.slice(1);
+            log('warn', 'Data conflict on key "' + key + '": Overwriting with an ' + typeName + '.');
         }
-    } else {
-        if (currentLevelType !== 'object') {
-            if (currentLevel !== undefined) {
-                log('warn', 'Data conflict on key "' + key + '": Overwriting with an Object.');
-            }
-            current[key] = {};
-        }
+        current[key] = (requiredType === 'array') ? [] : {};
     }
 };
 
@@ -333,8 +306,9 @@ const ensureStructure = function(current, key, nextKey) {
  * Helper for setNestedValue - Assigns the final value at the end of the path, handling special operators.
  */
 const assignFinalValue = function(current, finalKey, value) {
+    const currentType = getType(current);
     // Resolve '-1' if it's the final key in the path.
-    if (finalKey === ARRAY_OPERATORS.LAST && getType(current) === 'array') {
+    if (finalKey === ARRAY_OPERATORS.LAST && currentType === 'array') {
         if (current.length === 0) {
             log('error', 'Cannot use "-1" on an empty array.');
             return;
@@ -343,8 +317,8 @@ const assignFinalValue = function(current, finalKey, value) {
     }
 
     // Handle direct push/unshift of a value.
-    if (isPushOperator(finalKey)) {
-        if (getType(current) !== 'array') {
+    if ( PUSH_OPERATORS.indexOf(finalKey) !== -1) {
+        if (currentType !== 'array') {
             log('error', 'Cannot use dynamic push on a non-array.');
             return;
         }
@@ -382,7 +356,7 @@ const setNestedValue = function (obj, path, value) {
             else { log('error', 'Cannot use "-1" on an empty array.'); return; }
         }
 
-        if (isPushOperator(key)) {
+        if (PUSH_OPERATORS.indexOf(key) !== -1) {
             const newCurrent = handleDynamicPushInPath(current, key);
             if (newCurrent) {
                 current = newCurrent;
@@ -398,15 +372,6 @@ const setNestedValue = function (obj, path, value) {
 };
 
 /**
- * Normalizes a number string by replacing a European-style decimal comma with a dot.
- * This essential version assumes dots are not used as thousand separators.
- */
-const normalizeNumberString = function(numberString) {
-    return numberString.replace(',', '.');
-};
-
-
-/**
  * Converts a raw value to a specific type based on a user's selection.
  */
 const getTypedValue = function (rawValue, desiredType, varName) {
@@ -418,9 +383,7 @@ const getTypedValue = function (rawValue, desiredType, varName) {
     const stringValue = makeString(rawValue).trim();
     switch (desiredType) {
         case 'number':
-            // Call the dedicated normalization function
-            const normalizedValue = normalizeNumberString(stringValue);
-            const numValue = makeNumber(normalizedValue);
+            const numValue = makeNumber(stringValue.replace(',', '.'));
             // Check for NaN, which is the result of a failed conversion.
             if (numValue !== numValue) {
                 log('warn', 'Value "' + stringValue + '" for key "' + varName + '" could not be converted to a Number and was skipped.');
@@ -618,6 +581,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 14/08/2025, 18:20:03
+Created on 11/08/2025, 11:03:27
 
 
