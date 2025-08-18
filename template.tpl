@@ -259,8 +259,7 @@ const handleWildcard = (current, keys, currentIndex, value) => {
     }
     const remainingPath = keys.slice(currentIndex + 1).join('.');
     for (const element of current) {
-        const type = getType(element);
-        if (type === 'object' || type === 'array') {
+        if (element != null && typeof element === 'object') {
             setNestedValue(element, remainingPath, value);
         }
     }
@@ -284,10 +283,18 @@ const handleDynamicPushInPath = function(current, key) {
 };
 
 /**
+ * Helper for setNestedValue - Check if key is an operator.
+ */
+const isOperatorKey = function(key) {
+    return PUSH_OPERATORS.indexOf(key) !== -1 || SELECTOR_OPERATORS.indexOf(key) !== -1;
+};
+
+
+/**
  * Helper for setNestedValue - Ensures that the structure at the current key is of the correct type (array or object).
  */
 const ensureStructure = function(current, key, nextKey) {
-    const requiredType = (PUSH_OPERATORS.indexOf(nextKey) !== -1 || SELECTOR_OPERATORS.indexOf(nextKey) !== -1 || isIntegerString(nextKey))
+    const requiredType = ( isOperatorKey(nextKey) || isIntegerString(nextKey))
         ? 'array' 
         : 'object';
     const currentLevel = current[key];
@@ -463,12 +470,13 @@ if (queryPermission('access_globals', 'readwrite', dataLayerName)) {
         });
         //log processed parameter if debugMode is active
         if (debugMode) {
-            const paramsToLog = {};
-            Object.keys(eventData).forEach(function (key) {
+            // Extract only non-event properties for logging using reduce
+            const paramsToLog = Object.keys(eventData).reduce(function(acc, key) {
                 if (key !== 'event') {
-                    paramsToLog[key] = eventData[key];
+                    acc[key] = eventData[key];
                 }
-            });
+                return acc;
+            }, {});
             logProcessedParameters(paramsToLog);
         }
     } else {
@@ -581,6 +589,6 @@ scenarios: []
 
 ___NOTES___
 
-Created on 11/08/2025, 11:03:27
+Created on 11/08/2025, 10:50:00
 
 
